@@ -20,6 +20,18 @@ export function Select({ value, onChange, options }: SelectProps) {
   function clearOptions() {
     onChange(undefined);
   }
+
+  // Function for selecting an option
+  // Will call setValue for new option
+  function selectOption(option: SelectOption) {
+    onChange(option);
+  }
+
+  // Function for highlighting the selected option
+  function isOptionSelected(option: SelectOption) {
+    return option === value;
+  }
+
   return (
     <div
       // When clicking off the drop down
@@ -34,7 +46,7 @@ export function Select({ value, onChange, options }: SelectProps) {
       <span className={styles.value}>{value?.label}</span>
       <button
         onClick={(e) => {
-          e.stopPropagation;
+          e.stopPropagation();
           clearOptions();
         }}
         className={styles["clear-btn"]}
@@ -45,7 +57,18 @@ export function Select({ value, onChange, options }: SelectProps) {
       <div className={styles.caret}></div>
       <ul className={`${styles.options} ${isOpen ? styles.show : ""}`}>
         {options.map((option) => (
-          <li key={option.label} className={styles.option}>
+          <li
+            // Pass the options back to setValue so that value.label can be updated
+            onClick={(e) => {
+              e.stopPropagation();
+              selectOption(option);
+              setIsOpen(false);
+            }}
+            key={option.label}
+            className={`${styles.option} ${
+              isOptionSelected(option) ? styles.selected : ""
+            }`}
+          >
             {option.label}
           </li>
         ))}
